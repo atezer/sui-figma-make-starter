@@ -1,61 +1,274 @@
-**Add your own guidelines here**
-<!--
+# Design System Guidelines
 
-System Guidelines
+Bu dosya AI'nın kod üretirken uyması gereken kuralları içerir.
 
-Use this file to provide the AI with rules and guidelines you want it to follow.
-This template outlines a few examples of things you can add. You can add your own sections and format it to suit your needs
+## 🚨 EN ÖNEMLİ KURAL: Design Token'ları Kullan
 
-TIP: More context isn't always better. It can confuse the LLM. Try and add the most important rules you need
+**KOD YAZMAYA BAŞLAMADAN ÖNCE:**
 
-# General guidelines
+1. `/src/styles/theme.css` dosyasını oku
+2. `/src/constants/tokens.ts` dosyasını oku
+3. Bu token'ları kullanarak kod yaz
 
-Any general rules you want the AI to follow.
-For example:
+### ❌ ASLA YAPMA:
 
-* Only use absolute positioning when necessary. Opt for responsive and well structured layouts that use flexbox and grid by default
-* Refactor code as you go to keep code clean
-* Keep file sizes small and put helper functions and components in their own files.
+- Hardcoded hex renkleri kullanma: `bg-[#1064bc]`
+- Hardcoded pixel değerleri kullanma: `h-[44px]`, `p-[16px]`
+- Inline style'da magic number kullanma: `style={{ height: '44px' }}`
 
---------------
+### ✅ HER ZAMAN YAP:
 
-# Design system guidelines
-Rules for how the AI should make generations look like your company's design system
+- CSS variables kullan: `bg-[var(--color-brand-primary)]` veya `h-[var(--button-height-md)]`
+- Token constants kullan: `import { colors, button } from '@/constants/tokens'`
+- Tasarımda gördüğün değerin token'ını ara
 
-Additionally, if you select a design system to use in the prompt box, you can reference
-your design system's components, tokens, variables and components.
-For example:
+---
 
-* Use a base font-size of 14px
-* Date formats should always be in the format “Jun 10”
-* The bottom toolbar should only ever have a maximum of 4 items
-* Never use the floating action button with the bottom toolbar
-* Chips should always come in sets of 3 or more
-* Don't use a dropdown if there are 2 or fewer options
+## 📋 Token Kullanım Örnekleri
 
-You can also create sub sections and add more specific details
-For example:
+### Renkler
 
+```tsx
+// ❌ YANLIŞ
+<div className="bg-[#1064bc] text-[rgba(17,18,20,0.8)]">
 
-## Button
-The Button component is a fundamental interactive element in our design system, designed to trigger actions or navigate
-users through the application. It provides visual feedback and clear affordances to enhance user experience.
+// ✅ DOĞRU (CSS Variables)
+<div className="bg-[var(--color-brand-primary)] text-[var(--color-text-primary)]">
 
-### Usage
-Buttons should be used for important actions that users need to take, such as form submissions, confirming choices,
-or initiating processes. They communicate interactivity and should have clear, action-oriented labels.
+// ✅ DOĞRU (TS Constants)
+import { colors } from '@/constants/tokens';
+<div style={{ backgroundColor: colors.brand.primary, color: colors.text.primary }}>
+```
 
-### Variants
-* Primary Button
-  * Purpose : Used for the main action in a section or page
-  * Visual Style : Bold, filled with the primary brand color
-  * Usage : One primary button per section to guide users toward the most important action
-* Secondary Button
-  * Purpose : Used for alternative or supporting actions
-  * Visual Style : Outlined with the primary color, transparent background
-  * Usage : Can appear alongside a primary button for less important actions
-* Tertiary Button
-  * Purpose : Used for the least important actions
-  * Visual Style : Text-only with no border, using primary color
-  * Usage : For actions that should be available but not emphasized
--->
+### Spacing (Boşluklar)
+
+```tsx
+// ❌ YANLIŞ
+<div className="p-[16px] gap-[8px]">
+
+// ✅ DOĞRU
+<div className="p-[var(--spacing-md)] gap-[var(--spacing-sm)]">
+
+// ✅ DOĞRU (TS Constants)
+import { spacing } from '@/constants/tokens';
+<div style={{ padding: spacing.md, gap: spacing.sm }}>
+```
+
+### Buton Boyutları
+
+```tsx
+// ❌ YANLIŞ
+<button className="h-[44px] rounded-[4px]">
+
+// ✅ DOĞRU
+<button className="h-[var(--button-height-md)] rounded-[var(--button-radius)]">
+
+// ✅ DOĞRU (TS Constants)
+import { button } from '@/constants/tokens';
+<button style={{ height: button.height.md, borderRadius: button.radius.sm }}>
+```
+
+### Gölgeler
+
+```tsx
+// ❌ YANLIŞ
+<div className="shadow-[0px_2px_4px_0px_rgba(17,18,20,0.12)]">
+
+// ✅ DOĞRU
+<div className="shadow-[var(--shadow-sm)]">
+
+// ✅ DOĞRU (TS Constants)
+import { shadows } from '@/constants/tokens';
+<div style={{ boxShadow: shadows.sm }}>
+```
+
+---
+
+## 🎨 Mevcut Token'lar
+
+### Renkler
+
+- `--color-brand-primary` (#1064bc) - Ana mavi, butonlar için
+- `--color-brand-secondary` (#195e90) - Navigation bar
+- `--color-brand-background` (#f4f4f4) - Sayfa arka planı
+- `--color-text-primary` - Ana metin (opacity: 0.8)
+- `--color-text-secondary` - İkincil metin (opacity: 0.44)
+- `--color-text-disabled` - Devre dışı metin (opacity: 0.24)
+
+### Spacing
+
+- `--spacing-xs` (4px)
+- `--spacing-sm` (8px)
+- `--spacing-md` (16px) - En çok kullanılan
+- `--spacing-lg` (24px)
+- `--spacing-xl` (32px)
+
+### Button
+
+- `--button-height-md` (44px) - Standart buton yüksekliği
+- `--button-radius` (4px) - Buton border radius
+- `--shadow-sm` - Buton gölgesi
+
+### Navigation
+
+- `--nav-bar-bg` (#195e90)
+- `--nav-bar-height` (48px)
+
+---
+
+## 🏗️ Component Kuralları
+
+### Button Component
+
+```tsx
+// Standart buton yapısı
+<button
+  className="
+    bg-[var(--color-brand-primary)] 
+    h-[var(--button-height-md)]
+    px-[var(--spacing-md)]
+    rounded-[var(--button-radius)]
+    shadow-[var(--shadow-sm)]
+    text-[var(--color-text-white)]
+  "
+  disabled={disabled}
+>
+  {children}
+</button>
+
+// Disabled state otomatik opacity eklesin
+// disabled:opacity-50 disabled:cursor-not-allowed
+```
+
+### Navigation Bar
+
+```tsx
+<nav className="
+  bg-[var(--nav-bar-bg)]
+  h-[var(--nav-bar-height)]
+  px-[var(--spacing-md)]
+  py-[var(--spacing-sm)]
+">
+```
+
+### Text Elements
+
+```tsx
+// Ana başlık
+<h1 className="text-[var(--font-size-lg)] font-bold text-[var(--color-text-primary)]">
+
+// Caption / Label
+<p className="text-[var(--font-size-xs)] text-[var(--color-text-secondary)] uppercase">
+```
+
+---
+
+## 📱 Responsive Design
+
+- Desktop için max-width: 480px
+- Mobile-first approach kullan
+- Tailwind responsive prefix'leri: `sm:`, `md:`, `lg:`
+
+---
+
+## 🔤 Typography
+
+### Font Families
+
+- `font-['SHBGrotesk:bold',sans-serif]` - Kalın başlıklar için
+- `font-['SHBGrotesk:regular',sans-serif]` - Normal metin için
+- `font-['SF_Pro_Text:Semibold',sans-serif]` - Status bar için
+
+### Font Sizes
+
+- `--font-size-xs` (12px) - Caption, label
+- `--font-size-sm` (14px) - Small text, button text
+- `--font-size-base` (16px) - Normal text
+- `--font-size-lg` (18px) - Başlıklar
+- `--font-size-xl` (24px) - Büyük başlıklar
+
+---
+
+## ✨ Özel Durumlar
+
+### Opacity ile Renkler
+
+Eğer bir rengi opacity ile kullanman gerekiyorsa:
+
+```tsx
+// ✅ DOĞRU - Token'da tanımlı olanları kullan
+<p style={{ color: 'var(--color-text-secondary)' }}> // rgba(17,18,20,0.44)
+
+// ✅ DOĞRU - TS helper function kullan
+import { colors, withOpacity } from '@/constants/tokens';
+<p style={{ color: withOpacity(colors.brand.primary, 0.5) }}>
+
+// ❌ YANLIŞ - Direkt rgba yazma
+<p style={{ color: 'rgba(17,18,20,0.44)' }}>
+```
+
+### Yeni Token Ekleme
+
+Eğer tasarımda kullanılan bir değer token'larda yoksa:
+
+1. Önce `/src/styles/theme.css` dosyasına ekle
+2. Sonra `/src/constants/tokens.ts` dosyasına ekle
+3. Sonra kullan
+
+---
+
+## 🎯 Kod Kalitesi Kuralları
+
+1. **Responsive layout:** Absolute positioning'i sadece gerektiğinde kullan. Flexbox/Grid tercih et.
+2. **Clean code:** Helper fonksiyonları ve component'leri ayrı dosyalara ayır.
+3. **Small files:** Dosya boyutlarını küçük tut.
+4. **Reusable components:** Tekrar eden yapıları component'e çevir.
+5. **Accessibility:** ARIA attribute'ları ekle, semantic HTML kullan.
+
+---
+
+## 📝 Özet Checklist
+
+Kod yazarken:
+
+- [ ] Token dosyalarını kontrol ettim
+- [ ] Hardcoded değer kullanmadım
+- [ ] CSS variables veya TS constants kullandım
+- [ ] Responsive tasarladım
+- [ ] Accessibility ekledim
+- [ ] Component'leri reusable yaptım
+
+---
+
+## 💡 İyi Bilinen Hatalar
+
+### ❌ Sık Yapılan Hata:
+
+```tsx
+// Figma'dan kopyala-yapıştır yapmış gibi hardcoded değerler
+<button className="bg-[#1064bc] h-[44px] px-[16px] rounded-[4px]">
+```
+
+### ✅ Doğru Yaklaşım:
+
+```tsx
+// Token'ları kullan
+<button className="bg-[var(--color-brand-primary)] h-[var(--button-height-md)] px-[var(--spacing-md)] rounded-[var(--button-radius)]">
+```
+
+veya
+
+```tsx
+import { colors, button, spacing } from '@/constants/tokens';
+
+<button style={{
+  backgroundColor: colors.brand.primary,
+  height: button.height.md,
+  padding: `0 ${spacing.md}`,
+  borderRadius: button.radius.sm
+}}>
+```
+
+---
+
+**SON HATIRLATMA:** Her kod yazmadan önce `/src/styles/theme.css` ve `/src/constants/tokens.ts` dosyalarını oku!
