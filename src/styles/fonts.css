@@ -1,0 +1,52 @@
+/* ========================================
+   FONT FACE DEFINITIONS
+   SHBGrotesk Font Family
+   ======================================== */
+
+@font-face {
+  font-family: 'SHBGrotesk';
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: local('SHBGrotesk Light'), local('SHBGrotesk-Light');
+}
+
+@font-face {
+  font-family: 'SHBGrotesk';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: local('SHBGrotesk Regular'), local('SHBGrotesk-Regular');
+}
+
+@font-face {
+  font-family: 'SHBGrotesk';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: local('SHBGrotesk SemiBold'), local('SHBGrotesk-SemiBold');
+}
+
+@font-face {
+  font-family: 'SHBGrotesk';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: local('SHBGrotesk Bold'), local('SHBGrotesk-Bold');
+}
+
+@font-face {
+  font-family: 'SHBGrotesk';
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src: local('SHBGrotesk Italic'), local('SHBGrotesk-Italic');
+}
+
+@font-face {
+  font-family: 'SHBGrotesk';
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+  src: local('SHBGrotesk Bold Italic'), local('SHBGrotesk-BoldItalic');
+}

@@ -1,0 +1,58 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: 📦 Install dependencies
+      run: npm ci
+
+    - name: 🔍 Lint check
+      run: npm run lint --if-present
+
+    - name: 🏗️ Build
+      run: npm run build
+
+    - name: ✅ Check theme.css exists
+      run: |
+        if [ ! -f "src/styles/theme.css" ]; then
+          echo "❌ theme.css not found!"
+          exit 1
+        fi
+        echo "✅ theme.css exists"
+
+    - name: ✅ Check SUI components exist
+      run: |
+        component_count=$(find src/app/components/ui -name "*.tsx" | wc -l)
+        if [ $component_count -lt 40 ]; then
+          echo "❌ Expected 48 components, found $component_count"
+          exit 1
+        fi
+        echo "✅ Found $component_count components"
+
+    - name: 📊 Build size report
+      run: |
+        if [ -d "dist" ]; then
+          echo "📦 Build output size:"
+          du -sh dist
+        fi
